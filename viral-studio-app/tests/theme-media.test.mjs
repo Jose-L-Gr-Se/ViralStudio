@@ -191,8 +191,35 @@ test("rejects incomplete or invalid theme catalogs", () => {
   );
 });
 
-test("provides an empty versioned media manifest until local assets are added", () => {
-  assert.deepEqual(MEDIA_MANIFEST, { schemaVersion: 1, assets: [] });
+test("registers the licensed documentary proof photographs in the manifest", () => {
+  assert.deepEqual(
+    MEDIA_MANIFEST.assets.map(({ id, license, provenance, credits }) => ({
+      id,
+      license,
+      provenance: provenance.type,
+      credits,
+    })),
+    [
+      {
+        id: "usda-strawberry-farmer-impact",
+        license: "Public domain - U.S. federal government work (USDA)",
+        provenance: "public-domain",
+        credits: "USDAgov; photo by Lance Cheung.",
+      },
+      {
+        id: "usda-water-wise-strawberries",
+        license: "Public domain - U.S. federal government work (USDA)",
+        provenance: "public-domain",
+        credits: "USDAgov; photo by Lance Cheung.",
+      },
+      {
+        id: "usda-heirloom-tomatoes-conclusion",
+        license: "Public domain - U.S. federal government work (USDA)",
+        provenance: "public-domain",
+        credits: "USDAgov; photo by Lance Cheung.",
+      },
+    ],
+  );
   assert.equal(MediaManifestSchema.safeParse(MEDIA_MANIFEST).success, true);
 });
 

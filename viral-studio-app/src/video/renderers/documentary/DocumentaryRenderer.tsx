@@ -150,7 +150,7 @@ export const DocumentaryRenderer: React.FC<DocumentaryRendererProps> = ({
                 from={scene.from}
                 durationInFrames={scene.transitionIn.durationInFrames}
               >
-                <Freeze frame={previousScene.durationInFrames - 1}>
+                <Freeze frame={previousScene.transitionSourceFrame}>
                   <DocumentarySceneContent
                     scene={previousScene}
                     assets={document.assets}

@@ -29,12 +29,17 @@ Los temas solo contienen tokens de color, tipografía, escala, espaciado,
 radios, fondos y acabados; no fijan la composición ni el layout de las escenas.
 Las tipografías usan familias locales del sistema, sin descargas externas.
 
-Los recursos multimedia se registran en `src/video/media/manifest.ts`. El
-manifiesto está vacío inicialmente porque aún no hay archivos multimedia en
-el proyecto. Añade recursos a `public/media/` y registra para cada uno su ID,
-tipo, ruta relativa, procedencia, licencia, créditos y texto alternativo.
-Imágenes e ilustraciones pueden incluir un punto focal normalizado entre 0 y 1.
-La ruta, tipo y ID declarados en un vídeo deben coincidir con el manifiesto.
+Los recursos multimedia se registran en `src/video/media/manifest.ts`. Añade
+recursos a `public/media/` y registra para cada uno su ID, tipo, ruta relativa,
+procedencia, licencia, créditos y texto alternativo. Imágenes e ilustraciones
+pueden incluir un punto focal normalizado entre 0 y 1. La ruta, tipo y ID
+declarados en un vídeo deben coincidir con el manifiesto.
+
+La prueba C.1.4 registra tres fotografías documentales locales en
+`public/media/documentary-proof/`. Las páginas fuente de Wikimedia Commons y
+los metadatos de autoría/licencia están anotados por recurso en el manifiesto;
+las tres son fotografías oficiales del USDA en dominio público. El render de
+la prueba no accede a servicios externos.
 
 Extensiones permitidas:
 
@@ -100,10 +105,11 @@ corte.
 
 La transición ocupa los primeros fotogramas de la escena entrante sin mover ni
 solapar los intervalos de escena ni cambiar la duración del vídeo. La escena
-saliente se mantiene congelada durante la transición; la entrante conserva su
-frame 0, geometría, movimiento y timing. `dissolve` mezcla por opacidad;
-`wipe` revela mediante recorte dentro del lienzo y `fade` pasa por el fondo
-del tema entrante.
+saliente se congela en el último fotograma en que el medio aún está plenamente
+visible, respetando su movimiento y timing; así, el fundido local no deja una
+imagen vacía detrás de la transición. La entrante conserva su frame 0,
+geometría, movimiento y timing. `dissolve` mezcla por opacidad, `wipe` revela
+mediante recorte dentro del lienzo y `fade` pasa por el fondo del tema entrante.
 La primera escena no admite transición visual de entrada; las transiciones no
 pueden cruzar huecos entre escenas.
 
@@ -121,4 +127,14 @@ guarda un MP4 H.264 único en `out/tests/`.
 
 ```console
 npm run test:integration
+```
+
+La prueba audiovisual completa C.1.4 es independiente de `npm test` y del
+render de integración corto. Genera un MP4 H.264 de 24 segundos, verifica el
+conteo de fotogramas con FFprobe y conserva fotogramas de las escenas y
+transiciones, además de una hoja de contacto, bajo una carpeta única en
+`out/tests/`.
+
+```console
+npm run test:documentary-proof
 ```

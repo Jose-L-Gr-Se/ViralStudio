@@ -1,0 +1,375 @@
+{
+  "schemaVersion": 1,
+  "id": "documentary-sustainable-food-proof",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationSeconds": 24,
+  "themeId": "forest-editorial",
+  "assets": [
+    {
+      "id": "usda-strawberry-farmer-impact",
+      "kind": "image",
+      "path": "documentary-proof/impact-strawberry-farmer.jpg"
+    },
+    {
+      "id": "usda-water-wise-strawberries",
+      "kind": "image",
+      "path": "documentary-proof/water-wise-berries.jpg"
+    },
+    {
+      "id": "usda-heirloom-tomatoes-conclusion",
+      "kind": "image",
+      "path": "documentary-proof/closing-heirloom-tomatoes.jpg"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening-farm-impact",
+      "timing": {
+        "startSeconds": 0,
+        "durationSeconds": 8
+      },
+      "format": "documentary",
+      "layers": [
+        {
+          "id": "opening-farmer-photo",
+          "type": "image",
+          "assetId": "usda-strawberry-farmer-impact",
+          "layout": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1,
+            "fit": "cover"
+          },
+          "motion": {
+            "preset": "push-in",
+            "intensity": 0.45
+          },
+          "timing": {
+            "startSeconds": 0,
+            "durationSeconds": 8,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.6
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            }
+          }
+        },
+        {
+          "id": "opening-kicker",
+          "type": "text",
+          "role": "caption",
+          "text": "ALIMENTACIÓN · FUTURO",
+          "layout": {
+            "x": 0.08,
+            "y": 0.08,
+            "width": 0.84,
+            "height": 0.08,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.35,
+            "durationSeconds": 3.2,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.45
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.35
+            }
+          }
+        },
+        {
+          "id": "opening-headline",
+          "type": "text",
+          "role": "headline",
+          "text": "El futuro también se cultiva.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.55,
+            "width": 0.84,
+            "height": 0.2,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.7,
+            "durationSeconds": 5.8,
+            "enter": {
+              "preset": "rise",
+              "durationSeconds": 0.65
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.45
+            }
+          }
+        },
+        {
+          "id": "opening-body",
+          "type": "text",
+          "role": "body",
+          "text": "Cada elección diaria puede acercarnos a una alimentación más sostenible.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.77,
+            "width": 0.82,
+            "height": 0.12,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 1.4,
+            "durationSeconds": 4.7,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.55
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "water-wise-growing",
+      "timing": {
+        "startSeconds": 8,
+        "durationSeconds": 8
+      },
+      "transitionIn": {
+        "type": "dissolve",
+        "durationSeconds": 0.8
+      },
+      "format": "documentary",
+      "layers": [
+        {
+          "id": "water-wise-berry-photo",
+          "type": "image",
+          "assetId": "usda-water-wise-strawberries",
+          "layout": {
+            "x": 0.04,
+            "y": 0.04,
+            "width": 0.92,
+            "height": 0.52,
+            "fit": "cover"
+          },
+          "motion": {
+            "preset": "pan-left",
+            "intensity": 0.6
+          },
+          "timing": {
+            "startSeconds": 0.1,
+            "durationSeconds": 7.7,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.5
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.45
+            }
+          }
+        },
+        {
+          "id": "water-wise-kicker",
+          "type": "text",
+          "role": "caption",
+          "text": "PRODUCIR MEJOR, CUIDAR MÁS",
+          "layout": {
+            "x": 0.08,
+            "y": 0.59,
+            "width": 0.84,
+            "height": 0.06,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.55,
+            "durationSeconds": 3.8,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.35
+            }
+          }
+        },
+        {
+          "id": "water-wise-headline",
+          "type": "text",
+          "role": "headline",
+          "text": "Cada gota cuenta.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.67,
+            "width": 0.84,
+            "height": 0.1,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.85,
+            "durationSeconds": 6.4,
+            "enter": {
+              "preset": "rise",
+              "durationSeconds": 0.6
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.5
+            }
+          }
+        },
+        {
+          "id": "water-wise-fact",
+          "type": "text",
+          "role": "body",
+          "text": "Reiter Berry Farms ya ahorra un 30 % de agua con riego de precisión.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.79,
+            "width": 0.84,
+            "height": 0.12,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 1.25,
+            "durationSeconds": 5.8,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.55
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.45
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "closing-choice",
+      "timing": {
+        "startSeconds": 16,
+        "durationSeconds": 8
+      },
+      "transitionIn": {
+        "type": "wipe",
+        "durationSeconds": 0.7
+      },
+      "format": "documentary",
+      "layers": [
+        {
+          "id": "closing-tomato-photo",
+          "type": "image",
+          "assetId": "usda-heirloom-tomatoes-conclusion",
+          "layout": {
+            "x": 0.05,
+            "y": 0.06,
+            "width": 0.9,
+            "height": 0.53,
+            "fit": "cover"
+          },
+          "motion": {
+            "preset": "pull-out",
+            "intensity": 0.4
+          },
+          "timing": {
+            "startSeconds": 0,
+            "durationSeconds": 7.8,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.5
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.45
+            }
+          }
+        },
+        {
+          "id": "closing-kicker",
+          "type": "text",
+          "role": "caption",
+          "text": "EL CAMBIO ESTÁ EN NUESTRAS MANOS",
+          "layout": {
+            "x": 0.08,
+            "y": 0.63,
+            "width": 0.84,
+            "height": 0.07,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.45,
+            "durationSeconds": 5.5,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.45
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            }
+          }
+        },
+        {
+          "id": "closing-headline",
+          "type": "text",
+          "role": "headline",
+          "text": "Elige con propósito.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.72,
+            "width": 0.84,
+            "height": 0.1,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.9,
+            "durationSeconds": 5.7,
+            "enter": {
+              "preset": "scale",
+              "durationSeconds": 0.6
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.5
+            }
+          }
+        },
+        {
+          "id": "closing-body",
+          "type": "text",
+          "role": "body",
+          "text": "Más alimentos vegetales, locales y de temporada. Un paso cada día.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.84,
+            "width": 0.84,
+            "height": 0.1,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 1.5,
+            "durationSeconds": 5.3,
+            "enter": {
+              "preset": "rise",
+              "durationSeconds": 0.6
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.45
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

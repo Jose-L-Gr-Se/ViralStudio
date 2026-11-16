@@ -49,6 +49,7 @@ export type FrameScene = Omit<
 > & {
   readonly from: number;
   readonly durationInFrames: number;
+  readonly transitionSourceFrame: number;
   readonly transitionIn: FrameSceneTransition;
   readonly layers: readonly FrameLayer[];
 };
@@ -127,6 +128,32 @@ export const getSceneTransitionTiming = (
 const legacyFadeFrames = (durationInFrames: number): number =>
   Math.min(15, Math.floor(Math.max(0, durationInFrames) / 3));
 
+const getTransitionSourceFrame = (
+  sceneDurationInFrames: number,
+  layers: readonly FrameLayer[],
+): number => {
+  const lastFullyVisibleLayerFrames = layers
+    .filter(
+      (layer) =>
+        layer.type === "text" ||
+        layer.type === "image" ||
+        layer.type === "illustration" ||
+        layer.type === "video",
+    )
+    .map(({ frameTiming }) => {
+      const { exit, from, durationInFrames } = frameTiming;
+      const lastFullOpacityOffset = exit.legacy
+        ? durationInFrames - 1 - exit.durationInFrames
+        : durationInFrames - exit.durationInFrames;
+
+      return from + lastFullOpacityOffset;
+    });
+
+  return lastFullyVisibleLayerFrames.length > 0
+    ? Math.max(...lastFullyVisibleLayerFrames)
+    : sceneDurationInFrames - 1;
+};
+
 export const getLayerFrameTiming = (
   sceneFrom: number,
   sceneStartSeconds: number,
@@ -202,6 +229,7 @@ export const toFrameTimeline = (document: VideoDocument): FrameTimeline => {
       ...scene,
       from,
       durationInFrames,
+      transitionSourceFrame: getTransitionSourceFrame(durationInFrames, layers),
       layers,
     };
   });

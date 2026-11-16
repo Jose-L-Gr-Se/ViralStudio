@@ -31,6 +31,7 @@
     "test": "node --test tests/video-schema.test.mjs tests/theme-media.test.mjs tests/documentary-renderer.test.mjs",
     "test:phase-c": "node --test tests/documentary-renderer.test.mjs",
     "test:integration": "node --test tests/documentary-render.integration.test.mjs",
+    "test:documentary-proof": "node --test tests/documentary-proof.integration.test.mjs",
     "test:phase-b": "node --test tests/theme-media.test.mjs",
     "test:video-schema": "node --test tests/video-schema.test.mjs",
     "upgrade": "remotion upgrade",

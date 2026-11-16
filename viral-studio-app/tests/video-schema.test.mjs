@@ -498,6 +498,22 @@ test("supports a transition into the final scene and preserves legacy cuts", () 
   assert.equal(timeline.durationInFrames, 300);
 });
 
+test("chooses a visible outgoing layer frame for transition snapshots", () => {
+  const legacyTimeline = toFrameTimeline(parseVideoDocument(validDocument()));
+  assert.equal(legacyTimeline.scenes[0].transitionSourceFrame, 104);
+
+  const document = validDocument();
+  document.scenes[0].layers[1].timing = {
+    startSeconds: 1,
+    durationSeconds: 3,
+    exit: { preset: "fade", durationSeconds: 0.5 },
+  };
+
+  const timeline = toFrameTimeline(parseVideoDocument(document));
+  assert.equal(timeline.scenes[0].transitionSourceFrame, 105);
+  assert.equal(timeline.scenes[1].transitionSourceFrame, 164);
+});
+
 test("rejects scenes overlapping by exactly one frame", () => {
   const document = validDocument();
   document.scenes[1].timing.startSeconds = 119 / 30;
