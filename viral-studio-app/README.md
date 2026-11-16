@@ -47,6 +47,66 @@ El resolver acepta solo rutas relativas dentro de `public/media/`, comprueba
 la existencia del archivo y rechaza traversal, rutas absolutas, URLs remotas,
 extensiones incompatibles y symlinks que salgan de esa carpeta.
 
+## Layout de capas documentales
+
+Las capas documentales de texto, imagen, ilustración y vídeo pueden declarar
+un `layout` opcional con `x`, `y`, `width` y `height` normalizados respecto al
+lienzo. Sin `allowCrop: true`, la caja debe quedar dentro de `0..1` en ambos
+ejes. El recorte explícito permite coordenadas entre `-1..1` y dimensiones
+mayores que cero y hasta `2`; el lienzo recorta el contenido que sobresale.
+
+El texto admite `align: "left" | "center" | "right"`. Los medios admiten
+`fit: "cover" | "contain"`. Si se omite `layout`, se conservan las posiciones
+por rol del texto, el encuadre a pantalla completa de imágenes y vídeos y el
+inset actual de las ilustraciones. El orden de `layers` determina el
+apilamiento: la primera capa queda detrás de las siguientes.
+
+## Movimiento y timing documental
+
+Las capas de imagen, ilustración y vídeo admiten `motion` con los presets
+`static`, `push-in`, `pull-out`, `pan-left` y `pan-right`. La intensidad
+opcional se expresa entre `0` y `1` y vale `0.5` si se omite. Sin `motion`, se
+mantiene el movimiento documental anterior; `static` desactiva solo ese
+movimiento, no los fundidos.
+
+Las capas visuales admiten `timing` relativo a la escena. `startSeconds`
+comienza en `0` por defecto y `durationSeconds`, si se omite, ocupa hasta el
+final de la escena. `enter` y `exit` pueden usar `fade`, `rise` o `scale`, con
+duración en segundos. Si se omiten, se conservan los fundidos predeterminados.
+Los límites se validan en fotogramas: la capa debe tener al menos un fotograma
+visible y las animaciones deben dejar fotogramas visibles entre ambas.
+
+## Transiciones documentales entre escenas
+
+Una escena puede declarar `transitionIn` para definir cómo entra desde la
+escena documental consecutiva anterior:
+
+```json
+{
+  "transitionIn": {
+    "type": "dissolve",
+    "durationSeconds": 0.6
+  }
+}
+```
+
+Los tipos son `cut`, `dissolve`, `fade` y `wipe`. Si se omite el campo, se
+mantiene el corte actual. `cut` no necesita duración; las transiciones
+visuales requieren `durationSeconds`. Su conversión y duración efectiva se
+calculan en fotogramas por el timeline, limitadas por la longitud de ambas
+escenas adyacentes. Cada transición visual requiere al menos tres fotogramas
+efectivos para que el cambio aparezca en el render y no se convierta en un
+corte.
+
+La transición ocupa los primeros fotogramas de la escena entrante sin mover ni
+solapar los intervalos de escena ni cambiar la duración del vídeo. La escena
+saliente se mantiene congelada durante la transición; la entrante conserva su
+frame 0, geometría, movimiento y timing. `dissolve` mezcla por opacidad;
+`wipe` revela mediante recorte dentro del lienzo y `fade` pasa por el fondo
+del tema entrante.
+La primera escena no admite transición visual de entrada; las transiciones no
+pueden cruzar huecos entre escenas.
+
 ## Pruebas
 
 ```console

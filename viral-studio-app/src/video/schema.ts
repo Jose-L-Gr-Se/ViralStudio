@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { secondsToFrames } from "./timeline";
+import {
+  getLayerFrameTiming,
+  getSceneTransitionTiming,
+  isAtLeastOneFrameLong,
+  secondsToFrames,
+} from "./timeline";
 
 const IdSchema = z
   .string()
@@ -16,6 +21,84 @@ const AssetSchema = z
   })
   .strict();
 
+const NormalizedLayoutFields = {
+  x: z.number().finite().min(-1).max(1),
+  y: z.number().finite().min(-1).max(1),
+  width: z.number().finite().positive().max(2),
+  height: z.number().finite().positive().max(2),
+  allowCrop: z.literal(true).optional(),
+};
+
+const validateLayoutBounds = (
+  layout: {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly allowCrop?: true;
+  },
+  context: z.RefinementCtx,
+): void => {
+  if (layout.allowCrop) {
+    return;
+  }
+
+  if (layout.x < 0 || layout.x + layout.width > 1) {
+    context.addIssue({
+      code: "custom",
+      path: ["x"],
+      message: "Layout must remain within the canvas unless allowCrop is true.",
+    });
+  }
+
+  if (layout.y < 0 || layout.y + layout.height > 1) {
+    context.addIssue({
+      code: "custom",
+      path: ["y"],
+      message: "Layout must remain within the canvas unless allowCrop is true.",
+    });
+  }
+};
+
+const TextLayoutSchema = z
+  .object({
+    ...NormalizedLayoutFields,
+    align: z.enum(["left", "center", "right"]).optional(),
+  })
+  .strict()
+  .superRefine(validateLayoutBounds);
+
+const MediaLayoutSchema = z
+  .object({
+    ...NormalizedLayoutFields,
+    fit: z.enum(["cover", "contain"]).optional(),
+  })
+  .strict()
+  .superRefine(validateLayoutBounds);
+
+const LayerMotionSchema = z
+  .object({
+    preset: z.enum(["static", "push-in", "pull-out", "pan-left", "pan-right"]),
+    intensity: z.number().finite().min(0).max(1).optional(),
+  })
+  .strict();
+
+const LayerAnimationSchema = z
+  .object({
+    preset: z.enum(["fade", "rise", "scale"]),
+    durationSeconds: z.number().finite().positive(),
+  })
+  .strict();
+
+const LayerTimingSchema = z
+  .object({
+    startSeconds: z.number().finite().nonnegative().optional(),
+    durationSeconds: z.number().finite().positive().optional(),
+    enter: LayerAnimationSchema.optional(),
+    exit: LayerAnimationSchema.optional(),
+  })
+  .strict();
+
 const LayerSchema = z.discriminatedUnion("type", [
   z
     .object({
@@ -23,6 +106,8 @@ const LayerSchema = z.discriminatedUnion("type", [
       type: z.literal("text"),
       role: z.enum(["headline", "body", "caption", "quote", "callToAction"]),
       text: z.string().min(1),
+      layout: TextLayoutSchema.optional(),
+      timing: LayerTimingSchema.optional(),
     })
     .strict(),
   z
@@ -30,6 +115,9 @@ const LayerSchema = z.discriminatedUnion("type", [
       id: IdSchema,
       type: z.literal("image"),
       assetId: IdSchema,
+      layout: MediaLayoutSchema.optional(),
+      motion: LayerMotionSchema.optional(),
+      timing: LayerTimingSchema.optional(),
     })
     .strict(),
   z
@@ -37,6 +125,9 @@ const LayerSchema = z.discriminatedUnion("type", [
       id: IdSchema,
       type: z.literal("illustration"),
       assetId: IdSchema,
+      layout: MediaLayoutSchema.optional(),
+      motion: LayerMotionSchema.optional(),
+      timing: LayerTimingSchema.optional(),
     })
     .strict(),
   z
@@ -44,6 +135,9 @@ const LayerSchema = z.discriminatedUnion("type", [
       id: IdSchema,
       type: z.literal("video"),
       assetId: IdSchema,
+      layout: MediaLayoutSchema.optional(),
+      motion: LayerMotionSchema.optional(),
+      timing: LayerTimingSchema.optional(),
     })
     .strict(),
   z
@@ -72,6 +166,16 @@ const LayerSchema = z.discriminatedUnion("type", [
     .strict(),
 ]);
 
+const SceneTransitionSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("cut") }).strict(),
+  z
+    .object({
+      type: z.enum(["dissolve", "fade", "wipe"]),
+      durationSeconds: z.number().finite().positive(),
+    })
+    .strict(),
+]);
+
 const SceneSchema = z
   .object({
     id: IdSchema,
@@ -81,6 +185,7 @@ const SceneSchema = z
         durationSeconds: z.number().finite().positive(),
       })
       .strict(),
+    transitionIn: SceneTransitionSchema.optional(),
     format: z.enum([
       "documentary",
       "editorial",
@@ -182,10 +287,7 @@ export const VideoDocumentSchema = VideoDocumentBaseSchema.superRefine(
         });
       }
 
-      if (
-        scene.timing.durationSeconds * document.fps <
-        1 - Number.EPSILON * 8
-      ) {
+      if (!isAtLeastOneFrameLong(scene.timing.durationSeconds, document.fps)) {
         context.addIssue({
           code: "custom",
           path: ["scenes", sceneIndex, "timing", "durationSeconds"],
@@ -240,6 +342,85 @@ export const VideoDocumentSchema = VideoDocumentBaseSchema.superRefine(
         });
       }
 
+      const sceneDurationInFrames = endFrame - startFrame;
+      for (const [layerIndex, layer] of scene.layers.entries()) {
+        if (
+          layer.type !== "text" &&
+          layer.type !== "image" &&
+          layer.type !== "illustration" &&
+          layer.type !== "video"
+        ) {
+          continue;
+        }
+
+        const path = ["scenes", sceneIndex, "layers", layerIndex, "timing"];
+        let frameTiming: ReturnType<typeof getLayerFrameTiming>;
+        try {
+          frameTiming = getLayerFrameTiming(
+            startFrame,
+            scene.timing.startSeconds,
+            sceneDurationInFrames,
+            layer.timing,
+            document.fps,
+          );
+        } catch (error) {
+          if (!(error instanceof RangeError)) {
+            throw error;
+          }
+
+          context.addIssue({
+            code: "custom",
+            path,
+            message: `Layer "${layer.id}" timing exceeds the safe frame range.`,
+          });
+          continue;
+        }
+
+        if (frameTiming.durationInFrames <= 0) {
+          context.addIssue({
+            code: "custom",
+            path,
+            message: `Layer "${layer.id}" must remain visible for at least one frame.`,
+          });
+          continue;
+        }
+
+        if (
+          frameTiming.from < 0 ||
+          frameTiming.from + frameTiming.durationInFrames >
+            sceneDurationInFrames
+        ) {
+          context.addIssue({
+            code: "custom",
+            path,
+            message: `Layer "${layer.id}" must fit within scene "${scene.id}" in frames.`,
+          });
+        }
+
+        if (
+          (layer.timing?.enter && frameTiming.enter.durationInFrames < 2) ||
+          (layer.timing?.exit && frameTiming.exit.durationInFrames < 2)
+        ) {
+          context.addIssue({
+            code: "custom",
+            path,
+            message: `Layer "${layer.id}" entrance and exit animations must each span at least two frames.`,
+          });
+        }
+
+        if (
+          frameTiming.enter.durationInFrames +
+            frameTiming.exit.durationInFrames >=
+          frameTiming.durationInFrames
+        ) {
+          context.addIssue({
+            code: "custom",
+            path,
+            message: `Layer "${layer.id}" entrance and exit must leave at least one visible frame.`,
+          });
+        }
+      }
+
       ranges.push({
         id: scene.id,
         startFrame,
@@ -266,6 +447,53 @@ export const VideoDocumentSchema = VideoDocumentBaseSchema.superRefine(
 
       if (!previousRange || current.endFrame > previousRange.endFrame) {
         previousRange = current;
+      }
+    }
+
+    for (const [rangeIndex, current] of orderedRanges.entries()) {
+      const scene = document.scenes[current.sceneIndex];
+      const transition = scene.transitionIn;
+      if (!transition || transition.type === "cut") {
+        continue;
+      }
+
+      const previous = orderedRanges[rangeIndex - 1];
+      const path = ["scenes", current.sceneIndex, "transitionIn"];
+      if (!previous) {
+        context.addIssue({
+          code: "custom",
+          path,
+          message: `Scene "${scene.id}" cannot transition in because it is the first scene.`,
+        });
+        continue;
+      }
+
+      if (previous.endFrame !== current.startFrame) {
+        context.addIssue({
+          code: "custom",
+          path,
+          message: `Scene "${scene.id}" can only transition from a scene with a consecutive frame interval.`,
+        });
+        continue;
+      }
+
+      try {
+        getSceneTransitionTiming(
+          transition,
+          previous.endFrame - previous.startFrame,
+          current.endFrame - current.startFrame,
+          document.fps,
+        );
+      } catch (error) {
+        if (!(error instanceof RangeError)) {
+          throw error;
+        }
+
+        context.addIssue({
+          code: "custom",
+          path,
+          message: `Scene "${scene.id}" transition is too short for the available adjacent frames.`,
+        });
       }
     }
   },

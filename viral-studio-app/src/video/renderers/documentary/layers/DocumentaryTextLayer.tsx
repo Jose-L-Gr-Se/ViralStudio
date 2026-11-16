@@ -1,49 +1,24 @@
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import type { SceneLayer } from "../../../schema";
+import type { FrameLayerTiming } from "../../../timeline";
 import type { VisualTheme } from "../../../themes/schema";
-import { getLayerMotion, type MotionPreset } from "../motion";
+import { getTextLayerLayout } from "../layout";
+import {
+  combineLayerMotion,
+  getLayerAnimation,
+  getLayerMotion,
+  type MotionPreset,
+} from "../motion";
 
 type TextLayer = Extract<SceneLayer, { type: "text" }>;
 
 type DocumentaryTextLayerProps = {
   readonly layer: TextLayer;
   readonly theme: VisualTheme;
-  readonly durationInFrames: number;
+  readonly frameTiming: FrameLayerTiming;
   readonly layerIndex: number;
+  readonly zIndex: number;
   readonly preset: MotionPreset;
-};
-
-const TEXT_LAYOUT: Record<TextLayer["role"], React.CSSProperties> = {
-  headline: {
-    bottom: "19%",
-    left: "8%",
-    right: "8%",
-    textAlign: "center",
-  },
-  body: {
-    bottom: "10%",
-    left: "9%",
-    right: "9%",
-    textAlign: "left",
-  },
-  caption: {
-    top: "7%",
-    left: "9%",
-    right: "9%",
-    textAlign: "left",
-  },
-  quote: {
-    top: "35%",
-    left: "8%",
-    right: "8%",
-    textAlign: "center",
-  },
-  callToAction: {
-    bottom: "7%",
-    left: "9%",
-    right: "9%",
-    textAlign: "center",
-  },
 };
 
 const getTypography = (role: TextLayer["role"], theme: VisualTheme) => {
@@ -95,20 +70,38 @@ const getTextShadow = (theme: VisualTheme): string => {
 export const DocumentaryTextLayer: React.FC<DocumentaryTextLayerProps> = ({
   layer,
   theme,
-  durationInFrames,
+  frameTiming,
   layerIndex,
+  zIndex,
   preset,
 }) => {
   const frame = useCurrentFrame();
-  const motion = getLayerMotion(preset, frame, durationInFrames, layerIndex);
+  const composition = useVideoConfig();
+  const legacyMotion = getLayerMotion(
+    preset,
+    frame,
+    frameTiming.durationInFrames,
+    layerIndex,
+  );
+  const movement = {
+    scale: 1 + (legacyMotion.scale - 1) * 0.35,
+    translateX: legacyMotion.translateX * 0.35,
+    translateY: legacyMotion.translateY * 0.35,
+  };
+  const animation = getLayerAnimation(
+    frame,
+    frameTiming,
+    composition.height * 0.015,
+  );
+  const motion = combineLayerMotion(movement, animation);
   const typography = getTypography(layer.role, theme);
 
   return (
-    <AbsoluteFill style={{ zIndex: 100 + layerIndex }}>
+    <AbsoluteFill style={{ zIndex }}>
       <div
         style={{
           position: "absolute",
-          ...TEXT_LAYOUT[layer.role],
+          ...getTextLayerLayout(layer),
           fontFamily: typography.font.family,
           fontSize: typography.fontSize,
           fontWeight: typography.font.weight,
@@ -117,7 +110,7 @@ export const DocumentaryTextLayer: React.FC<DocumentaryTextLayerProps> = ({
           color: typography.color,
           textShadow: getTextShadow(theme),
           opacity: motion.opacity,
-          transform: `translate3d(${motion.translateX * 0.35}px, ${motion.translateY * 0.35}px, 0) scale(${1 + (motion.scale - 1) * 0.35})`,
+          transform: `translate3d(${motion.translateX}px, ${motion.translateY}px, 0) scale(${motion.scale})`,
           transformOrigin: "center",
         }}
       >

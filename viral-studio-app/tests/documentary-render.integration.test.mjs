@@ -195,7 +195,7 @@ test(
         scenes: [
           {
             id: "documentary-integration-scene",
-            timing: { startSeconds: 0, durationSeconds: 9 },
+            timing: { startSeconds: 0, durationSeconds: 6 },
             format: "documentary",
             layers: [
               {
@@ -220,6 +220,29 @@ test(
                 type: "text",
                 role: "body",
                 text: "Cada elección puede nutrir el mañana.",
+              },
+            ],
+          },
+          {
+            id: "documentary-integration-closing",
+            timing: { startSeconds: 6, durationSeconds: 3 },
+            transitionIn: {
+              type: "dissolve",
+              durationSeconds: 0.6,
+            },
+            format: "documentary",
+            layers: [
+              {
+                id: "integration-closing-caption",
+                type: "text",
+                role: "caption",
+                text: "VIRAL STUDIO / TRANSICIÓN",
+              },
+              {
+                id: "integration-closing-headline",
+                type: "text",
+                role: "headline",
+                text: "Un futuro más sostenible",
               },
             ],
           },

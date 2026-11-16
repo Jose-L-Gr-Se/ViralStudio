@@ -4,16 +4,34 @@ import {
   OffthreadVideo,
   staticFile,
   useCurrentFrame,
+  useVideoConfig,
 } from "remotion";
-import type { VideoAsset } from "../../../schema";
+import type { SceneLayer, VideoAsset } from "../../../schema";
+import type { FrameLayerTiming } from "../../../timeline";
 import type { DocumentaryMediaKind, PreparedDocumentaryMedia } from "../types";
-import { getLayerMotion, type MotionPreset } from "../motion";
+import { getMediaLayerLayout, getMediaLayerViewport } from "../layout";
+import {
+  combineLayerMotion,
+  getLayerAnimation,
+  getLayerMotion,
+  getMediaMotion,
+  type MotionPreset,
+} from "../motion";
+
+type DocumentaryMediaLayerSchema = Extract<
+  SceneLayer,
+  { type: "image" | "illustration" | "video" }
+>;
 
 type DocumentaryMediaLayerProps = {
   readonly asset: VideoAsset;
+  readonly kind: DocumentaryMediaLayerSchema["type"];
+  readonly layout: DocumentaryMediaLayerSchema["layout"];
+  readonly motion: DocumentaryMediaLayerSchema["motion"];
+  readonly frameTiming: FrameLayerTiming;
   readonly media: PreparedDocumentaryMedia;
-  readonly durationInFrames: number;
   readonly layerIndex: number;
+  readonly zIndex: number;
   readonly preset: MotionPreset;
 };
 
@@ -23,9 +41,13 @@ const isGraphicMediaKind = (
 
 export const DocumentaryMediaLayer: React.FC<DocumentaryMediaLayerProps> = ({
   asset,
+  kind,
+  layout,
+  motion: layerMotion,
+  frameTiming,
   media,
-  durationInFrames,
   layerIndex,
+  zIndex,
   preset,
 }) => {
   if (!isGraphicMediaKind(asset.kind) || asset.kind !== media.kind) {
@@ -35,29 +57,41 @@ export const DocumentaryMediaLayer: React.FC<DocumentaryMediaLayerProps> = ({
   }
 
   const frame = useCurrentFrame();
-  const motion = getLayerMotion(preset, frame, durationInFrames, layerIndex);
+  const composition = useVideoConfig();
   const objectPosition = media.focalPoint
     ? `${media.focalPoint.x * 100}% ${media.focalPoint.y * 100}%`
     : "50% 50%";
-  const illustration = asset.kind === "illustration";
+  const mediaLayout = getMediaLayerLayout(kind, layout);
+  const viewport = getMediaLayerViewport(kind, layout, composition);
+  const movement = layerMotion
+    ? getMediaMotion(
+        layerMotion.preset,
+        frame,
+        frameTiming.durationInFrames,
+        layerMotion.intensity ?? 0.5,
+        viewport,
+      )
+    : getLayerMotion(preset, frame, frameTiming.durationInFrames, layerIndex);
+  const animation = getLayerAnimation(
+    frame,
+    frameTiming,
+    viewport.height * 0.02,
+  );
+  const composedMotion = combineLayerMotion(movement, animation);
   const mediaStyle: React.CSSProperties = {
     width: "100%",
     height: "100%",
-    objectFit: illustration ? "contain" : "cover",
+    objectFit: mediaLayout.objectFit,
     objectPosition,
-    transform: `translate3d(${motion.translateX}px, ${motion.translateY}px, 0) scale(${motion.scale})`,
-    opacity: motion.opacity,
+    transform: `translate3d(${composedMotion.translateX}px, ${composedMotion.translateY}px, 0) scale(${composedMotion.scale})`,
+    transformOrigin: "center",
+    opacity: composedMotion.opacity,
   };
-  const containerStyle: React.CSSProperties = illustration
-    ? {
-        inset: "12%",
-        overflow: "hidden",
-        zIndex: layerIndex,
-      }
-    : {
-        overflow: "hidden",
-        zIndex: layerIndex,
-      };
+  const containerStyle: React.CSSProperties = {
+    ...mediaLayout.containerStyle,
+    overflow: "hidden",
+    zIndex,
+  };
   const src = staticFile(media.publicPath);
 
   return (
@@ -66,7 +100,7 @@ export const DocumentaryMediaLayer: React.FC<DocumentaryMediaLayerProps> = ({
         <OffthreadVideo
           src={src}
           muted
-          durationInFrames={durationInFrames}
+          durationInFrames={frameTiming.durationInFrames}
           style={mediaStyle}
         />
       ) : (
