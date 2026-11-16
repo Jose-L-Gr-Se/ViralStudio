@@ -21,6 +21,23 @@ npm run render:vertical
 El archivo se genera en `out/viral-studio-vertical.mp4` con resolución
 1080x1920, 30 fps y duración de 15 segundos.
 
+## Render documental desde JSON
+
+Los documentos JSON de vídeo se guardan en `videos/`. El comando valida el
+documento, prepara los recursos locales registrados y renderiza mediante el
+renderer documental reutilizable:
+
+```console
+npm run video:render -- --input videos/mi-video.json
+```
+
+La salida predeterminada es `out/videos/<id-del-documento>.mp4`. Se puede
+seleccionar otra ruta con `--output ruta/video.mp4`. Si el archivo ya existe,
+el render se rechaza; `--overwrite` solo reemplaza el destino después de que
+FFprobe confirme códec, dimensiones, FPS, duración y fotogramas del temporal.
+Las rutas de entrada y salida relativas se resuelven desde `viral-studio-app/`.
+El comando requiere FFmpeg y FFprobe instalados localmente.
+
 ## Temas y recursos locales
 
 El catálogo tipado de temas está en `src/video/themes/catalog.ts`:
@@ -137,4 +154,13 @@ transiciones, además de una hoja de contacto, bajo una carpeta única en
 
 ```console
 npm run test:documentary-proof
+```
+
+Las pruebas del comando se ejecutan por separado de `npm test`. La prueba CLI
+no renderiza; la integración real requiere FFmpeg y FFprobe locales y verifica
+un documento distinto del fixture C.1.4:
+
+```console
+npm run test:video-render-cli
+npm run test:video-render
 ```

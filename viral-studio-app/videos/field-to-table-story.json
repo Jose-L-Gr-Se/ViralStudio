@@ -1,0 +1,373 @@
+{
+  "schemaVersion": 1,
+  "id": "field-to-table-story",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationSeconds": 18,
+  "themeId": "cinematic-dark",
+  "assets": [
+    {
+      "id": "usda-heirloom-tomatoes-conclusion",
+      "kind": "image",
+      "path": "documentary-proof/closing-heirloom-tomatoes.jpg"
+    },
+    {
+      "id": "usda-water-wise-strawberries",
+      "kind": "image",
+      "path": "documentary-proof/water-wise-berries.jpg"
+    },
+    {
+      "id": "usda-strawberry-farmer-impact",
+      "kind": "image",
+      "path": "documentary-proof/impact-strawberry-farmer.jpg"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "market-origin",
+      "timing": {
+        "startSeconds": 0,
+        "durationSeconds": 6
+      },
+      "format": "documentary",
+      "layers": [
+        {
+          "id": "market-tomatoes-photo",
+          "type": "image",
+          "assetId": "usda-heirloom-tomatoes-conclusion",
+          "layout": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1,
+            "fit": "cover"
+          },
+          "motion": {
+            "preset": "push-in",
+            "intensity": 0.35
+          },
+          "timing": {
+            "durationSeconds": 6,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.5
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.45
+            }
+          }
+        },
+        {
+          "id": "market-origin-kicker",
+          "type": "text",
+          "role": "caption",
+          "text": "DEL MERCADO AL CAMPO",
+          "layout": {
+            "x": 0.08,
+            "y": 0.08,
+            "width": 0.84,
+            "height": 0.07,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.2,
+            "durationSeconds": 3.8,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.3
+            }
+          }
+        },
+        {
+          "id": "market-origin-headline",
+          "type": "text",
+          "role": "headline",
+          "text": "El origen importa.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.52,
+            "width": 0.84,
+            "height": 0.11,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.55,
+            "durationSeconds": 4.8,
+            "enter": {
+              "preset": "rise",
+              "durationSeconds": 0.55
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            }
+          }
+        },
+        {
+          "id": "market-origin-body",
+          "type": "text",
+          "role": "body",
+          "text": "Una compra puede acercarte a quien cultiva.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.65,
+            "width": 0.84,
+            "height": 0.1,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.95,
+            "durationSeconds": 4.4,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.5
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.35
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "seasonal-rhythm",
+      "timing": {
+        "startSeconds": 6,
+        "durationSeconds": 6
+      },
+      "transitionIn": {
+        "type": "fade",
+        "durationSeconds": 0.65
+      },
+      "format": "documentary",
+      "themeId": "scientific",
+      "layers": [
+        {
+          "id": "seasonal-strawberry-photo",
+          "type": "image",
+          "assetId": "usda-water-wise-strawberries",
+          "layout": {
+            "x": 0.05,
+            "y": 0.05,
+            "width": 0.9,
+            "height": 0.46,
+            "fit": "cover"
+          },
+          "motion": {
+            "preset": "pan-right",
+            "intensity": 0.35
+          },
+          "timing": {
+            "durationSeconds": 5.75,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.45
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            }
+          }
+        },
+        {
+          "id": "seasonal-rhythm-kicker",
+          "type": "text",
+          "role": "caption",
+          "text": "ALIMENTOS DE TEMPORADA",
+          "layout": {
+            "x": 0.08,
+            "y": 0.55,
+            "width": 0.84,
+            "height": 0.06,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.25,
+            "durationSeconds": 4.4,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.35
+            }
+          }
+        },
+        {
+          "id": "seasonal-rhythm-headline",
+          "type": "text",
+          "role": "headline",
+          "text": "La tierra marca el ritmo.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.65,
+            "width": 0.84,
+            "height": 0.11,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.6,
+            "durationSeconds": 4.3,
+            "enter": {
+              "preset": "rise",
+              "durationSeconds": 0.55
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            }
+          }
+        },
+        {
+          "id": "seasonal-rhythm-body",
+          "type": "text",
+          "role": "body",
+          "text": "Elegir en temporada conecta sabor, cultivo y lugar.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.78,
+            "width": 0.84,
+            "height": 0.11,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.95,
+            "durationSeconds": 4.1,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.5
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.35
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "people-behind-food",
+      "timing": {
+        "startSeconds": 12,
+        "durationSeconds": 6
+      },
+      "transitionIn": {
+        "type": "dissolve",
+        "durationSeconds": 0.75
+      },
+      "format": "documentary",
+      "layers": [
+        {
+          "id": "farmer-origin-photo",
+          "type": "image",
+          "assetId": "usda-strawberry-farmer-impact",
+          "layout": {
+            "x": 0.04,
+            "y": 0.05,
+            "width": 0.92,
+            "height": 0.56,
+            "fit": "cover"
+          },
+          "motion": {
+            "preset": "pull-out",
+            "intensity": 0.3
+          },
+          "timing": {
+            "durationSeconds": 5.8,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.5
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            }
+          }
+        },
+        {
+          "id": "people-behind-food-kicker",
+          "type": "text",
+          "role": "caption",
+          "text": "CADA MESA TIENE UNA HISTORIA",
+          "layout": {
+            "x": 0.08,
+            "y": 0.65,
+            "width": 0.84,
+            "height": 0.06,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.2,
+            "durationSeconds": 4.7,
+            "enter": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.35
+            }
+          }
+        },
+        {
+          "id": "people-behind-food-headline",
+          "type": "text",
+          "role": "headline",
+          "text": "Conoce a quien produce.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.74,
+            "width": 0.84,
+            "height": 0.1,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.55,
+            "durationSeconds": 4.9,
+            "enter": {
+              "preset": "scale",
+              "durationSeconds": 0.5
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.4
+            }
+          }
+        },
+        {
+          "id": "people-behind-food-body",
+          "type": "text",
+          "role": "body",
+          "text": "El vínculo con el origen empieza con una elección.",
+          "layout": {
+            "x": 0.08,
+            "y": 0.86,
+            "width": 0.84,
+            "height": 0.1,
+            "align": "left"
+          },
+          "timing": {
+            "startSeconds": 0.95,
+            "durationSeconds": 4.5,
+            "enter": {
+              "preset": "rise",
+              "durationSeconds": 0.5
+            },
+            "exit": {
+              "preset": "fade",
+              "durationSeconds": 0.35
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
