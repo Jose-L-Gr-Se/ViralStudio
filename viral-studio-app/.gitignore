@@ -5,3 +5,9 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# Local agent tooling and generated Remotion bundle
+/.agents/
+/.claude/
+/skills-lock.json
+/build/
